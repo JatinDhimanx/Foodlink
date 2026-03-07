@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Dashboard | FoodLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+    
+    <div class="container dashboard-container">
+        <div class="dashboard-header">
+            <div>
+                <h1 style="color: var(--primary-dark)">Welcome, <span id="user-name">Organization</span></h1>
+                <p class="text-muted">Claim available food for your communities</p>
+            </div>
+            <a href="/map-view.html" class="btn btn-outline">Find on Map</a>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Left: Available Food -->
+            <div class="panel">
+                <div class="panel-header" style="background-color: rgba(46, 204, 113, 0.05);">
+                    <h2 class="panel-title" style="color: var(--primary-dark)">Available Donations Nearby</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="item-list" id="available-food">
+                        <p class="text-muted">Searching for available food...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Claimed Food -->
+            <div class="panel h-fit">
+                <div class="panel-header">
+                    <h2 class="panel-title">Your Active Claims</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="item-list" id="my-pickups">
+                        <p class="text-muted">Loading claims...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

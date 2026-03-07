@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodLink | Map View</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/map.css">
+</head>
+<body id="map-view">
+    <div id="navbar-container"></div>
+    
+    <div class="map-container">
+        <div id="map"></div>
+        <div class="map-sidebar">
+            <div class="map-sidebar-header">
+                <h2>Live Food Map</h2>
+                <p style="font-size:0.85rem; opacity:0.9;">Available food & NGOs nearby</p>
+            </div>
+            <div class="map-filters">
+                <button class="btn btn-outline" style="width:100%" id="locate-me-btn">My Location</button>
+            </div>
+            <div class="map-listings" id="map-listings-container">
+                <p class="text-muted p-2">Loading data...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module">
+        import mapInit from './js/map/mapInit.js';
+        import { getAvailableListings } from './js/api/foodApi.js';
+        import locationService from './js/services/locationService.js';
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            const map = mapInit.init('map', [37.7749, -122.4194], 12);
+            
+            document.getElementById('locate-me-btn').addEventListener('click', async () => {
+                try {
+                    const coords = await locationService.getCurrentPosition();
+                    mapInit.centerMap(coords.lat, coords.lng, 14);
+                    // Add blue dot for self
+                    mapInit.addMarker(coords.lat, coords.lng, "<b>You are here</b>", "blue");
+                } catch(e) {
+                    console.error('Location error', e);
+                }
+            });
+
+            const loadListings = async () => {
+                try {
+                    const res = await getAvailableListings();
+                    const container = document.getElementById('map-listings-container');
+                    
+                    mapInit.clearMarkers();
+                    
+                    container.innerHTML = res.data.map(listing => {
+                        const loc = listing.restaurantId?.location || listing.location;
+                        if(loc && loc.lat && loc.lng) {
+                            mapInit.addMarker(
+                                loc.lat, 
+                                loc.lng, 
+                                `<b>${listing.foodType}</b><br>${listing.quantity}<br>Radius: ${listing.restaurantId?.name}`,
+                                "green"
+                            );
+                        }
+                        return `
+                          <div class="map-item" onclick="window.panMapTo(${loc?.lat || 0}, ${loc?.lng || 0})">
+                            <h4>${listing.foodType}</h4>
+                            <div class="text-muted" style="font-size:0.85rem">
+                                By: ${listing.restaurantId?.name || 'Local Restaurant'}
+                            </div>
+                          </div>
+                        `;
+                    }).join('');
+                } catch(e) {}
+            };
+
+            window.panMapTo = (lat, lng) => {
+                if(lat && lng) mapInit.centerMap(lat, lng, 16);
+            };
+
+            await loadListings();
+        });
+    </script>
+</body>
+</html>

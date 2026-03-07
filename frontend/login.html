@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | FoodLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+    
+    <div class="container auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Welcome Back</h1>
+                <p>Log in to continue your impact.</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="name@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Log In</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="/register.html">Sign Up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/auth.js"></script>
+</body>
+</html>
