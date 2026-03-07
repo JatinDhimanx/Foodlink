@@ -4,579 +4,828 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoodLink | Fresh, Local, Surplus Food</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    <title>FoodLink | End Food Waste Today</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* ==================== GLOBAL STYLES & THEME ==================== */
         :root {
-            --bg-blue: #EAF3FA;
-            /* Background color from image */
-            --brand-green: #6CBE58;
-            /* The green color from image */
-            --brand-dark: #1A1A1A;
-            --text-grey: #7A8B99;
+            --bg-body: #FAFAFB;
+            --brand-primary: #00A859;
+            --brand-secondary: #0A2351;
+            --brand-dark: #1C1C28;
+            --text-muted: #8F90A6;
             --white: #FFFFFF;
+            --success: #28A745;
+            --glass: rgba(255, 255, 255, 0.95);
+            --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --section-padding: 100px;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
         }
 
-        body {
-            background-color: var(--bg-blue);
-            color: var(--brand-dark);
-            overflow-x: hidden;
+        html {
             scroll-behavior: smooth;
         }
 
+        body {
+            overflow-x: hidden;
+            background-color: var(--bg-body);
+            color: var(--brand-dark);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #F1F1F5; }
+        ::-webkit-scrollbar-thumb { background: #C7C9D9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--brand-primary); }
+
         .container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 5%;
             width: 100%;
         }
 
-        /* ==================== NAVBAR ==================== */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
+        /* Animations */
+        @keyframes fadeInUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(0, 168, 89, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 168, 89, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 168, 89, 0); }
+        }
+
+        /* Utilities */
+        .section-padding { padding: var(--section-padding) 0; }
+
+        .badge-premium {
+            background: rgba(0, 168, 89, 0.1);
+            color: var(--brand-primary);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-flex;
             align-items: center;
-            padding: 1.5rem 4%;
-            position: relative;
-            z-index: 100;
+            gap: 6px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--brand-dark);
+            letter-spacing: -1px;
+            animation: fadeInUp 0.6s ease both;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 50px;
+            animation: fadeInUp 0.7s ease both;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            gap: 10px;
+            font-size: 1.05rem;
+        }
+
+        .btn-primary {
+            background: var(--brand-primary);
+            color: white;
+            box-shadow: 0 10px 25px rgba(0, 168, 89, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 168, 89, 0.4);
+            background: #008f4c;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--brand-dark);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            border: 1px solid #F1F1F5;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--brand-dark);
+            transform: translateY(-3px);
+        }
+
+        /* Navbar */
+        .navbar {
+            padding: 1.2rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: transparent;
+            transition: all 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.8rem 5%;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.05);
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-decoration: none;
+            color: var(--brand-dark);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            color: var(--brand-dark);
+            gap: 8px;
+            letter-spacing: -1px;
+            z-index: 1001; /* Keeps logo above mobile menu */
         }
 
-        .logo span {
-            color: var(--brand-green);
+        .logo i {
+            color: var(--brand-primary);
+            font-size: 1.5rem;
         }
 
-        .nav-links {
+        .nav-links, .nav-actions {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 3rem;
+            align-items: center;
         }
 
-        .nav-links a {
+        .nav-links a, .nav-actions a {
             text-decoration: none;
             color: var(--brand-dark);
-            font-weight: 500;
+            font-weight: 600;
+            transition: 0.3s;
             font-size: 0.95rem;
-            transition: color 0.3s;
         }
 
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--brand-green);
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 1rem;
-        }
+        .nav-links a:hover { color: var(--brand-primary); }
 
         .hamburger {
             display: none;
             font-size: 1.5rem;
             cursor: pointer;
-        }
-
-        /* ==================== BUTTONS ==================== */
-        .btn {
-            padding: 0.6rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-        }
-
-        .btn-outline-green {
-            border: 2px solid var(--brand-green);
-            color: var(--brand-green);
-            background: transparent;
-        }
-
-        .btn-outline-green:hover {
-            background: var(--brand-green);
-            color: var(--white);
-        }
-
-        .btn-solid-white {
-            background: var(--white);
-            color: var(--brand-green);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .btn-solid-white:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .btn-solid-green {
-            background: var(--brand-green);
-            color: var(--white);
-            padding: 0.8rem 2rem;
-            box-shadow: 0 8px 20px rgba(108, 190, 88, 0.3);
-        }
-
-        .btn-solid-green:hover {
-            background: #5aa647;
-            transform: translateY(-2px);
-        }
-
-        /* ==================== HERO SECTION (Visual Match) ==================== */
-        .hero-section {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 4rem 4% 8rem;
-            position: relative;
-            min-height: 80vh;
-        }
-
-        /* The large green background shape */
-        .green-curve {
-            position: absolute;
-            top: -15%;
-            right: -8%;
-            width: 60vw;
-            height: 115vh;
-            background-color: var(--brand-green);
-            border-bottom-left-radius: 50%;
-            z-index: -1;
-        }
-
-        .hero-content {
-            max-width: 500px;
-            flex: 1;
-        }
-
-        .hero-content h1 {
-            font-size: 3.5rem;
-            line-height: 1.1;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
+            z-index: 1001;
             color: var(--brand-dark);
         }
 
-        .hero-content p {
-            color: var(--text-grey);
-            font-size: 1.1rem;
-            margin-bottom: 2.5rem;
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            transition: var(--transition-smooth);
+            z-index: 999;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu a {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--brand-dark);
+            text-decoration: none;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            padding: 160px 0 100px;
+            background: radial-gradient(circle at top right, #FFF4ED 0%, var(--bg-body) 60%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            background: rgba(0, 168, 89, 0.05);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            align-items: center;
+            gap: 5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text { animation: fadeInUp 0.8s ease; }
+
+        .hero-text h1 {
+            font-size: 4.5rem;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: var(--brand-dark);
+        }
+
+        .hero-text h1 span {
+            background: linear-gradient(135deg, var(--brand-primary), #00C853);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-text p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 500px;
             line-height: 1.6;
         }
 
-        .hero-btns {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        /* The floating image from reference */
-        .hero-image {
-            flex: 1;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .hero-image img {
-            width: 100%;
-            max-width: 550px;
-            height: auto;
-            border-radius: 50%;
-            object-fit: cover;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-            border: 15px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* ==================== MENU SECTION (Quantity instead of Price) ==================== */
-        .menu-section {
-            padding-bottom: 5rem;
-            padding-top: 2rem;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 4rem;
-            font-weight: 800;
-        }
-
-        .section-title span {
-            color: var(--brand-green);
-            font-weight: 600;
-        }
-
-        .food-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2.5rem;
-            padding-top: 2rem;
-        }
-
-        /* Floating Card Styling */
-        .food-card {
-            background: var(--white);
-            border-radius: 24px;
-            padding: 0 1.5rem 1.5rem;
-            text-align: left;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-            transition: transform 0.3s ease, background 0.3s;
+        .hero-image-box {
             position: relative;
-            margin-top: 30px;
-            border: 1px solid transparent;
-            cursor: pointer;
-        }
-
-        .food-card:hover {
-            transform: translateY(-10px);
-            border-color: #eee;
-        }
-
-        .card-content {
-            padding-top: 2rem;
-        }
-
-        .card-content h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            color: var(--brand-dark);
-            text-transform: capitalize;
-        }
-
-        .card-content .desc {
-            color: var(--text-grey);
-            font-size: 0.9rem;
-            margin-bottom: 1.2rem;
-            line-height: 1.4;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .card-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 700;
-            border-top: 1px solid #eee;
-            padding-top: 1rem;
-        }
-
-        .quantity {
-            font-size: 1rem;
-            color: var(--brand-green);
-            font-weight: 700;
-            background: rgba(108, 190, 88, 0.1);
-            padding: 5px 12px;
-            border-radius: 20px;
-        }
-
-        .fav-icon {
-            color: #ccc;
-            font-size: 1.2rem;
-            transition: color 0.3s;
-        }
-
-        .food-card:hover .fav-icon {
-            color: #e74c3c;
-        }
-
-        /* ==================== FEATURED SECTION ==================== */
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 5rem;
-        }
-
-        .cat-card {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
-            transition: all 0.3s ease;
-        }
-
-        .cat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(108, 190, 88, 0.15);
-        }
-
-        .cat-icon {
-            font-size: 2.5rem;
-            display: block;
-            margin-bottom: 1rem;
-            color: var(--brand-green);
-        }
-
-        .cat-card h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--brand-dark);
-        }
-
-        /* Animations */
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-20px);
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
-        }
-
-        .floating-anim {
             animation: float 6s ease-in-out infinite;
         }
 
-        /* ==================== RESPONSIVE MEDIA QUERIES ==================== */
+        .hero-image-box img {
+            width: 100%;
+            border-radius: 30px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.1);
+            border: 10px solid white;
+        }
+
+        .stat-badge {
+            position: absolute;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
+        }
+
+        .stat-badge i { font-size: 2rem; color: var(--success); }
+        .stat-badge.top-left { top: 10%; left: -30px; animation: float 5s ease-in-out infinite 1s; }
+        .stat-badge.bottom-right { bottom: 20%; right: -20px; animation: float 7s ease-in-out infinite 0.5s; }
+
+        /* Food Listings */
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .food-card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02);
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .food-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 168, 89, 0.08);
+            border-color: rgba(0, 168, 89, 0.1);
+        }
+
+        .card-img-placeholder {
+            height: 200px;
+            background: linear-gradient(45deg, #F1F1F5, #FAFAFB);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #D5D5E1;
+            position: relative;
+        }
+
+        .live-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: var(--brand-primary);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--brand-primary);
+            border-radius: 50%;
+            animation: pulseGlow 2s infinite;
+        }
+
+        .card-body {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-body h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--brand-dark);
+            margin-bottom: 15px;
+            display: -webkit-box;
+            line-clamp: 2;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-meta i { width: 20px; text-align: center; color: var(--brand-primary); }
+
+        .card-footer {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed #E2E8F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .qty-tag {
+            background: #E8F5E9;
+            color: var(--brand-primary);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .claim-btn {
+            background: var(--brand-dark);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .food-card:hover .claim-btn { background: var(--brand-primary); }
+
+        /* How it Works */
+        .how-works {
+            background: #1C1C28;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .how-works .section-title { color: white; }
+        .how-works .section-subtitle { color: #8F90A6; }
+
+        .partner-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .partner-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 4rem 3rem;
+            border-radius: 30px;
+            text-align: center;
+            transition: var(--transition-smooth);
+            backdrop-filter: blur(10px);
+        }
+
+        .partner-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(0, 168, 89, 0.5);
+        }
+
+        .partner-card .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 168, 89, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 2.2rem;
+            color: var(--brand-primary);
+            transition: 0.3s;
+        }
+
+        .partner-card:hover .icon-wrapper {
+            background: var(--brand-primary);
+            color: white;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .partner-card h3 { font-size: 1.6rem; font-weight: 800; margin-bottom: 15px; }
+        .partner-card p { color: #8F90A6; font-size: 1.05rem; line-height: 1.6; }
+
+        /* Footer */
+        footer {
+            padding: 50px 0;
+            text-align: center;
+            background: #13131A;
+            color: #8F90A6;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        footer .logo { color: white; font-size: 2rem; margin-bottom: 15px; justify-content: center; }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: white;
+            border-left: 4px solid var(--brand-primary);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: fadeInUp 0.4s ease forwards;
+            font-weight: 600;
+            color: var(--brand-dark);
+        }
+
+        /* Responsive */
         @media (max-width: 1024px) {
-            .hero-content h1 {
-                font-size: 2.8rem;
-            }
-
-            .hero-image img {
-                max-width: 450px;
-            }
+            .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 4rem; }
+            .hero-text h1 { font-size: 3.5rem; }
+            .hero-text p { margin-left: auto; margin-right: auto; }
+            .hero-image-box img { max-width: 600px; }
+            .stat-badge { display: none; }
         }
 
-        @media (max-width: 900px) {
-            .navbar {
-                padding: 1rem 5%;
-            }
-
-            .nav-links,
-            .nav-buttons {
-                display: none;
-            }
-
-            /* Mobile Menu */
-            .hamburger {
-                display: block;
-            }
-
-            .hero-section {
-                flex-direction: column;
-                text-align: center;
-                padding-top: 2rem;
-                padding-bottom: 6rem;
-            }
-
-            .green-curve {
-                width: 100vw;
-                height: 55vh;
-                top: 0;
-                right: 0;
-                border-bottom-left-radius: 0;
-            }
-
-            .hero-content {
-                max-width: 100%;
-                margin-bottom: 4rem;
-            }
-
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero-btns {
-                justify-content: center;
-            }
-
-            .hero-image {
-                justify-content: center;
-                width: 100%;
-            }
-
-            .hero-image img {
-                width: 85%;
-                height: auto;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-
-            .food-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 768px) {
+            .navbar { padding: 1rem 5%; }
+            .nav-links, .nav-actions { display: none; }
+            .hamburger { display: block; }
+            .partner-grid { grid-template-columns: 1fr; }
+            .hero-text h1 { font-size: 2.8rem; }
+            .section-title { font-size: 2.2rem; }
         }
     </style>
 </head>
 
 <body>
 
-    <nav class="navbar container">
-        <a href="/" class="logo">🍽️ FOOD<span>LINK</span></a>
-        <ul class="nav-links">
-            <li><a href="#" class="active">Home</a></li>
-            <li><a href="#menu">Available Food</a></li>
-            <li><a href="#">NGO Partners</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="/login.html" style="color: #e74c3c; font-weight: 700;">Donate </a></li>
-        </ul>
-        <div class="nav-buttons">
-            <a href="/register.html" class="btn btn-outline-green">Sign Up</a>
-            <a href="/login.html" class="btn btn-solid-white">Sign In</a>
+    <nav class="navbar">
+        <div class="container" style="padding:0; display:flex; justify-content:space-between; align-items:center;">
+            <a href="/" class="logo"><i class="fa-solid fa-leaf"></i> Food<span>Link</span></a>
+            
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#menu">Live Feed</a></li>
+                <li><a href="#how-it-works">For Partners</a></li>
+            </ul>
+            
+            <div class="nav-actions" style="gap:15px;">
+                <a href="/login.html" style="font-weight: 700; color: var(--brand-dark);">Log In</a>
+                <a href="/register.html" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sign Up</a>
+            </div>
+            
+            <div class="hamburger" id="hamburger-btn"><i class="fa-solid fa-bars"></i></div>
         </div>
-        <div class="hamburger">☰</div>
     </nav>
 
-    <header class="hero-section container">
-        <div class="green-curve"></div>
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="#" class="mobile-link">Home</a>
+        <a href="#menu" class="mobile-link">Live Feed</a>
+        <a href="#how-it-works" class="mobile-link">For Partners</a>
+        <a href="/login.html" class="mobile-link" style="color: var(--brand-primary);">Log In</a>
+        <a href="/register.html" class="btn btn-primary">Sign Up</a>
+    </div>
 
-        <div class="hero-content">
-            <h1>Fresh, Local, Delicious<br>The Future Table</h1>
-            <p>Indulge in chef-crafted recipes made with fresh, local ingredients. Claim delicious, perfectly good
-                surplus food and make an impact.</p>
-            <div class="hero-btns">
-                <a href="/login.html" class="btn btn-solid-green">Explore Listings</a>
-                <a href="/map-view.html" class="btn btn-solid-white">View Map &rarr;</a>
+    <div class="toast-container" id="toast-container"></div>
+
+    <header class="hero">
+        <div class="container hero-grid">
+            <div class="hero-text">
+                <div class="badge-premium"><i class="fa-solid fa-bolt"></i> Instant Rescue Protocol</div>
+                <h1>Rescue Premium Food,<br><span>Feed the Future.</span></h1>
+                <p>Join the fastest-growing network of restaurants, NGOs, and delivery partners ensuring no good meal goes to waste.</p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                    <a href="#menu" class="btn btn-primary">Claim Food Now <i class="fa-solid fa-arrow-right"></i></a>
+                    <a href="/map-view.html" class="btn btn-secondary"><i class="fa-solid fa-map-location-dot"></i> Open Live Map</a>
+                </div>
             </div>
-        </div>
-
-        <div class="hero-image floating-anim">
-            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                alt="Fresh Salad Bowl">
+            <div class="hero-image-box">
+                <div class="stat-badge top-left">
+                    <i class="fa-solid fa-box-open"></i>
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Meals Rescued</div>
+                        <div style="font-size: 1.2rem; color: var(--brand-dark);">12,450+</div>
+                    </div>
+                </div>
+                <div class="stat-badge bottom-right">
+                    <i class="fa-solid fa-handshake"></i>
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Active NGOs</div>
+                        <div style="font-size: 1.2rem; color: var(--brand-dark);">340+</div>
+                    </div>
+                </div>
+                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=80" alt="Delicious Food">
+            </div>
         </div>
     </header>
 
-    <section id="menu" class="menu-section container">
-        <h2 class="section-title">Live <span>Available Food</span></h2>
+    <section id="menu" class="container section-padding">
+        <div class="badge-premium" style="margin: 0 auto 15px; display: table;"><i class="fa-solid fa-satellite-dish"></i> Live Radar</div>
+        <h2 class="section-title">Fresh listings nearby</h2>
+        <p class="section-subtitle">Real-time surplus food drops from premium restaurants in your vicinity. Claim them before they're gone.</p>
 
         <div class="food-grid" id="live-food-grid">
-            <p style="text-align: center; color: var(--text-grey); grid-column: 1 / -1;">Connecting to live database...
-            </p>
-        </div>
-    </section>
-
-    <section class="featured-categories container">
-        <h2 class="section-title"><span>Partner</span> Types</h2>
-        <div class="category-grid">
-            <div class="cat-card">
-                <span class="cat-icon">🍽️</span>
-                <h3>Restaurants<br>(Donors)</h3>
-            </div>
-            <div class="cat-card">
-                <span class="cat-icon">❤️</span>
-                <h3>NGOs<br>(Distributors)</h3>
-            </div>
-            <div class="cat-card">
-                <span class="cat-icon">🛵</span>
-                <h3>Volunteers<br>(Delivery)</h3>
+            <div style="text-align: center; grid-column: 1/-1; padding: 50px;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--brand-primary); margin-bottom: 20px;"></i>
+                <p style="color: var(--text-muted); font-size: 1.1rem; font-weight: 500;">Scanning network for fresh drops...</p>
             </div>
         </div>
     </section>
 
-    <footer
-        style="text-align: center; padding: 3rem; color: var(--text-grey); font-size: 0.9rem; border-top: 1px solid #eee;">
-        &copy; 2024 FoodLink. All rights reserved. End Food Waste.
+    <section id="how-it-works" class="how-works section-padding">
+        <div class="container">
+            <h2 class="section-title">The Ecosystem</h2>
+            <p class="section-subtitle" style="max-width: 500px;">A seamless, three-point logistics network designed to eliminate food waste completely.</p>
+
+            <div class="partner-grid">
+                <div class="partner-card">
+                    <div class="icon-wrapper"><i class="fa-solid fa-utensils"></i></div>
+                    <h3>Restaurants</h3>
+                    <p>Hotels & cafes list high-quality excess inventory instantly via our partner portal.</p>
+                </div>
+                <div class="partner-card">
+                    <div class="icon-wrapper"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                    <h3>NGOs</h3>
+                    <p>Verified organizations lock in bulk food claims with a single click for distribution.</p>
+                </div>
+                <div class="partner-card">
+                    <div class="icon-wrapper"><i class="fa-solid fa-motorcycle"></i></div>
+                    <h3>Volunteers</h3>
+                    <p>Gig-economy style routing guides drivers perfectly from pickup to the drop zone.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <a href="/" class="logo"><i class="fa-solid fa-leaf"></i> Food<span>Link</span></a>
+            <p style="margin-top: 10px;">&copy; 2024 FoodLink. Eliminating Global Waste.</p>
+        </div>
     </footer>
 
     <script>
-        // Check if user is already logged in, redirect to dashboard based on token payload
-        /* Disabled to keep index.html as the first page!
-        if (localStorage.getItem('token')) {
-            const token = localStorage.getItem('token');
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                if (payload.role) {
-                    window.location.href = \`/dashboard-\${payload.role}.html\`;
-                }
-            } catch (e) {
-                console.log("Token not parsed");
-            }
-        }
-        */
-
-        // Mobile menu toggle logic
-        document.querySelector('.hamburger').addEventListener('click', () => {
-            const nav = document.querySelector('.nav-links');
-            // Basic toggle - can be made prettier with CSS classes
-            nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
-            if (nav.style.display === 'flex') {
-                nav.style.flexDirection = 'column';
-                nav.style.position = 'absolute';
-                nav.style.top = '70px';
-                nav.style.left = '0';
-                nav.style.width = '100%';
-                nav.style.background = '#EAF3FA';
-                nav.style.padding = '20px';
-                nav.style.zIndex = '999';
-            }
+        // --- UI Interactions ---
+        
+        // Navbar Scrolled Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.navbar');
+            if (window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
         });
 
-        // Fetch Live Food Listings from MongoDB
-        async function fetchLiveFood() {
-            const grid = document.getElementById('live-food-grid');
-            try {
-                const res = await fetch('http://localhost:5000/api/food/available');
-                const result = await res.json();
+        // Mobile Menu Toggle
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
 
-                grid.innerHTML = '';
-
-                if (!result.data || result.data.length === 0) {
-                    grid.innerHTML = '<p style="text-align: center; color: var(--text-grey); grid-column: 1 / -1; padding: 3rem;">No food currently available. Check back soon!</p>';
-                    return;
-                }
-
-                result.data.forEach(item => {
-                    const restaurantName = item.restaurantId && item.restaurantId.name ? item.restaurantId.name : 'Partner Restaurant';
-
-                    grid.innerHTML += `
-                        <div class="food-card" onclick="window.location.href='/login.html'">
-                            <div class="card-content">
-                                <h3>${item.foodType}</h3>
-                                <p class="desc">📍 ${item.location.address}</p>
-                                <p class="desc" style="font-size: 0.8rem; margin-bottom: 5px;">🏢 By: ${restaurantName}</p>
-                                <p class="desc" style="font-size: 0.8rem;">⏰ Available till: ${new Date(item.pickupTime).toLocaleString()}</p>
-                                <div class="card-bottom">
-                                    <span class="quantity">Qty: ${item.quantity}</span>
-                                    <span class="fav-icon">Claim &rarr;</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            } catch (err) {
-                console.error("API Error", err);
-                grid.innerHTML = '<p style="text-align: center; color: red; grid-column: 1 / -1;">Failed to load live data.</p>';
+        function toggleMenu() {
+            const isActive = mobileMenu.classList.contains('active');
+            if(isActive) {
+                mobileMenu.classList.remove('active');
+                menuOverlay.classList.remove('active');
+                hamburgerBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+            } else {
+                mobileMenu.classList.add('active');
+                menuOverlay.classList.add('active');
+                hamburgerBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
             }
         }
 
-        // Initialize fetch
+        hamburgerBtn.addEventListener('click', toggleMenu);
+        menuOverlay.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
+
+        // Toast Notification Function
+        function showToast(message, icon = 'fa-info-circle', isWarning = false) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            if (isWarning) toast.style.borderLeftColor = '#f39c12';
+            
+            toast.innerHTML = `<i class="fa-solid ${icon}" style="color: ${isWarning ? '#f39c12' : 'var(--brand-primary)'}; font-size: 1.2rem;"></i> ${message}`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'fadeInUp 0.4s ease reverse forwards';
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
+
+        // --- Data Fetching & Rendering ---
+
+        // Smart Icon logic based on food text
+        const getFoodIcon = (type) => {
+            const t = type.toLowerCase();
+            if (t.includes('pizza')) return 'fa-pizza-slice';
+            if (t.includes('burger')) return 'fa-burger';
+            if (t.includes('bread') || t.includes('bakery') || t.includes('pastry')) return 'fa-bread-slice';
+            if (t.includes('veg') || t.includes('salad')) return 'fa-leaf';
+            if (t.includes('meat') || t.includes('chicken')) return 'fa-drumstick-bite';
+            if (t.includes('fruit')) return 'fa-apple-whole';
+            return 'fa-bowl-food'; // Default
+        };
+
+        // Render Function
+        const renderFoodGrid = (data) => {
+            const grid = document.getElementById('live-food-grid');
+            grid.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                grid.innerHTML = `
+                    <div style="text-align: center; grid-column: 1/-1; padding: 70px; background: white; border-radius: 20px;">
+                        <i class="fa-solid fa-box-open" style="font-size: 3rem; color: #E2E8F0; margin-bottom: 15px;"></i>
+                        <h3 style="font-size: 1.5rem; color: var(--brand-dark); margin-bottom: 10px;">All caught up!</h3>
+                        <p style="color: var(--text-muted); font-size: 1.1rem;">No surplus food available right now. The network is clear.</p>
+                    </div>`;
+                return;
+            }
+
+            data.forEach((item, index) => {
+                const restaurantName = item.restaurantId && item.restaurantId.name ? item.restaurantId.name : 'Verified Partner';
+                const iconClass = getFoodIcon(item.foodType);
+                const expTime = new Date(item.pickupTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                grid.innerHTML += `
+                    <div class="food-card" onclick="window.location.href='/login.html'" style="animation: fadeInUp 0.6s ease ${index * 0.1}s both;">
+                        <div class="card-img-placeholder">
+                            <i class="fa-solid ${iconClass}"></i>
+                            <div class="live-badge"><span class="live-dot"></span> LIVE LISTING</div>
+                        </div>
+                        <div class="card-body">
+                            <div>
+                                <h3>${item.foodType}</h3>
+                                <div class="card-meta"><i class="fa-solid fa-location-dot"></i> ${item.location.address}</div>
+                                <div class="card-meta"><i class="fa-solid fa-store"></i> ${restaurantName}</div>
+                                <div class="card-meta"><i class="fa-regular fa-clock"></i> Exp: ${expTime}</div>
+                            </div>
+                            <div class="card-footer">
+                                <span class="qty-tag"><i class="fa-solid fa-box"></i> ${item.quantity} units</span>
+                                <div class="claim-btn">Claim <i class="fa-solid fa-arrow-right" style="margin-left: 5px;"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        };
+
+        async function fetchLiveFood() {
+            try {
+                const res = await fetch('http://localhost:5000/api/food/available');
+                if (!res.ok) throw new Error("Server returned an error");
+                const result = await res.json();
+                renderFoodGrid(result.data);
+                
+                // Show toast only on manual refresh or initial load, not silent polling
+                if(!window.hasLoadedInitially) {
+                    showToast('Live feed connected to server', 'fa-check-circle');
+                    window.hasLoadedInitially = true;
+                }
+            } catch (err) {
+                console.warn("Backend not detected. Falling back to Mock Data for UI demonstration.");
+                
+                // Mock Data Fallback Array
+                const mockData = [
+                    { foodType: 'Assorted Pastries', location: { address: 'Sector 14, Tech Park' }, restaurantId: { name: 'Sweet Delights Bakery' }, pickupTime: new Date(Date.now() + 3600000).toISOString(), quantity: 15 },
+                    { foodType: 'Veggie Pizza Slices', location: { address: 'Downtown Mall Plaza' }, restaurantId: { name: 'Pizza Haven' }, pickupTime: new Date(Date.now() + 7200000).toISOString(), quantity: 8 },
+                    { foodType: 'Fresh Mediterranean Salads', location: { address: 'Westside Avenue' }, restaurantId: { name: 'Green Bowl Cafe' }, pickupTime: new Date(Date.now() + 1800000).toISOString(), quantity: 12 }
+                ];
+                
+                renderFoodGrid(mockData);
+                
+                if(!window.hasWarnedOffline) {
+                    showToast('Backend offline. Displaying Demo Data.', 'fa-plug-circle-exclamation', true);
+                    window.hasWarnedOffline = true; // Prevent spamming the warning
+                }
+            }
+        }
+
+        // Initial Fetch
         fetchLiveFood();
+
+        // Auto-poll every 30 seconds to keep feed updated
+        setInterval(fetchLiveFood, 30000); 
+
     </script>
 </body>
 

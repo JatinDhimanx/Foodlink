@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodLink | Fresh, Local Surplus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- GLOBAL STYLES --- */
+        :root {
+            --bg-blue: #EAF3FA;
+            --brand-green: #6CBE58;
+            --brand-dark: #1A1A1A;
+            --text-grey: #7A8B99;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-blue);
+            color: var(--brand-dark);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 4%;
+            position: relative;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--brand-green);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--brand-dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--brand-green);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+        }
+
+        .btn-outline-green {
+            border: 2px solid var(--brand-green);
+            color: var(--brand-green);
+            background: transparent;
+        }
+
+        .btn-outline-green:hover {
+            background: var(--brand-green);
+            color: var(--white);
+        }
+
+        .btn-solid-white {
+            background: var(--white);
+            color: var(--brand-green);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-solid-white:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-solid-green {
+            background: var(--brand-green);
+            color: var(--white);
+            padding: 0.8rem 2rem;
+        }
+
+        .btn-solid-green:hover {
+            background: #5aa647;
+            transform: translateY(-2px);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4rem 4% 8rem;
+            position: relative;
+            min-height: 80vh;
+        }
+
+        .green-curve {
+            position: absolute;
+            top: -10%;
+            right: -5%;
+            width: 55vw;
+            height: 110vh;
+            background-color: var(--brand-green);
+            border-bottom-left-radius: 50%;
+            z-index: -1;
+        }
+
+        .hero-content {
+            max-width: 500px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content p {
+            color: var(--text-grey);
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .hero-image img {
+            width: 550px;
+            height: 550px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border: 15px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* --- MENU SECTION (Floating Cards) --- */
+        .menu-section {
+            margin-top: -3rem;
+            padding-bottom: 5rem;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2.5rem;
+            padding-top: 4rem;
+        }
+
+        .food-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 0 1.5rem 1.5rem;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s ease;
+            position: relative;
+            margin-top: 50px;
+        }
+
+        .food-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .food-img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            position: absolute;
+            top: -65px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: 4px solid var(--white);
+        }
+
+        .card-content {
+            padding-top: 80px;
+        }
+
+        .card-content h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+        }
+
+        .card-content .desc {
+            color: var(--text-grey);
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+        }
+
+        .quantity {
+            font-size: 1rem;
+            color: var(--brand-dark);
+        }
+
+        /* --- FEATURED SECTION --- */
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            font-weight: 800;
+        }
+
+        .section-title span {
+            color: var(--brand-green);
+            font-weight: 600;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 5rem;
+        }
+
+        .cat-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s ease;
+        }
+
+        .cat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .cat-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--brand-green);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .floating-anim {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @media (max-width: 900px) {
+            .hero-section {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 2rem;
+            }
+
+            .green-curve {
+                width: 100vw;
+                height: 50vh;
+                top: 0;
+                right: 0;
+                border-bottom-left-radius: 0;
+            }
+
+            .hero-image img {
+                width: 90%;
+                height: auto;
+                margin-top: 3rem;
+            }
+
+            .nav-links,
+            .nav-buttons {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">🍽️ FOOD<span>LINK</span></div>
+        <ul class="nav-links">
+            <li><a href="#" class="active">Home</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Service</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="/dashboard-restaurant.html" style="color: #e74c3c; font-weight: 700;">Donate / Sell Food</a>
+            </li>
+        </ul>
+        <div class="nav-buttons">
+            <a href="/register.html" class="btn btn-outline-green">Sign Up</a>
+            <a href="/login.html" class="btn btn-solid-white">Sign In</a>
+        </div>
+        <div class="hamburger">☰</div>
+    </nav>
+
+    <header class="hero-section">
+        <div class="green-curve"></div>
+        <div class="hero-content">
+            <h1>Fresh, Local, Delicious<br>The Future Table</h1>
+            <p>Indulge in chef-crafted recipes made with fresh, local ingredients. Claim surplus food delivered to your
+                NGO or community.</p>
+            <div class="hero-btns">
+                <a href="#menu" class="btn btn-solid-green">Order Now</a>
+                <a href="/map-view.html" class="btn btn-solid-white">Explore More &rarr;</a>
+            </div>
+        </div>
+        <div class="hero-image floating-anim">
+            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Fresh Salad Bowl">
+        </div>
+    </header>
+
+    <section id="menu" class="menu-section container">
+        <div class="food-grid">
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?ixlib=rb-4.0.3&w=300&q=80"
+                    alt="Spaghetti" class="food-img">
+                <div class="card-content">
+                    <h3>Spaghetti</h3>
+                    <p class="desc">Mix Vegetable, from Grand Hotel</p>
+                    <div class="card-bottom">
+                        <span class="quantity">Qty: 20 Servings</span>
+                        <span style="cursor:pointer;">🤍</span>
+                    </div>
+                </div>
+            </div>
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&w=300&q=80"
+                    alt="Aloo Mutter" class="food-img">
+                <div class="card-content">
+                    <h3>Aloo mutter</h3>
+                    <p class="desc">Potato & Mutton, Spice Villa</p>
+                    <div class="card-bottom">
+                        <span class="quantity">Qty: 5 kg</span>
+                        <span style="cursor:pointer;">🤍</span>
+                    </div>
+                </div>
+            </div>
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?ixlib=rb-4.0.3&w=300&q=80"
+                    alt="Grilled Veg" class="food-img">
+                <div class="card-content">
+                    <h3>Grilled vegetables</h3>
+                    <p class="desc">Paprika, onion, eggplant</p>
+                    <div class="card-bottom">
+                        <span class="quantity">Qty: 15 Boxes</span>
+                        <span style="cursor:pointer;">🤍</span>
+                    </div>
+                </div>
+            </div>
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&w=300&q=80"
+                    alt="Greek Salad" class="food-img">
+                <div class="card-content">
+                    <h3>Greek salad</h3>
+                    <p class="desc">Fresh vegetables & cheese</p>
+                    <div class="card-bottom">
+                        <span class="quantity">Qty: 8 Bowls</span>
+                        <span style="cursor:pointer;">🤍</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured-categories container">
+        <h2 class="section-title">New <span>Featured</span></h2>
+        <div class="category-grid">
+            <div class="cat-card">
+                <span class="cat-icon">🥪</span>
+                <h3>Indian<br>Sandwich</h3>
+            </div>
+            <div class="cat-card">
+                <span class="cat-icon">🐟</span>
+                <h3>Barbecue<br>Fish</h3>
+            </div>
+            <div class="cat-card">
+                <span class="cat-icon">🥩</span>
+                <h3>Steak<br>Vegetables</h3>
+            </div>
+            <div class="cat-card">
+                <span class="cat-icon">🥗</span>
+                <h3>Vegetables<br>Salad</h3>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Simple Mobile Menu Toggle embedded
+        document.querySelector('.hamburger').addEventListener('click', () => {
+            const nav = document.querySelector('.nav-links');
+            if (nav.style.display === 'flex') {
+                nav.style.display = 'none';
+            } else {
+                nav.style.display = 'flex';
+                nav.style.flexDirection = 'column';
+                nav.style.position = 'absolute';
+                nav.style.top = '80px';
+                nav.style.left = '0';
+                nav.style.width = '100%';
+                nav.style.background = '#EAF3FA';
+                nav.style.padding = '20px';
+            }
+        });
+    </script>
+</body>
+
+</html>

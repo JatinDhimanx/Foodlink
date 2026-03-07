@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | FoodLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-blue: #EAF3FA;
+            --brand-green: #6CBE58;
+            --brand-dark: #1A1A1A;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-blue);
+            color: var(--brand-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .auth-card {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .auth-card h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-card p {
+            color: #7A8B99;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--brand-green);
+            box-shadow: 0 0 0 3px rgba(108, 190, 88, 0.1);
+        }
+
+        .btn-solid-green {
+            width: 100%;
+            background: var(--brand-green);
+            color: var(--white);
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-solid-green:hover {
+            background: #5aa647;
+            transform: translateY(-2px);
+        }
+
+        .auth-footer {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #7A8B99;
+        }
+
+        .auth-footer a {
+            color: var(--brand-green);
+            font-weight: 600;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-card">
+        <h1>Welcome Back</h1>
+        <p>Sign in to manage your food redistribution</p>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input type="email" id="email" class="form-control" placeholder="name@example.com" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-solid-green">Sign In</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account? <a href="/register.html">Sign Up</a></p>
+            <p style="margin-top: 10px;"><a href="/index.html">&larr; Back to Home</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Add your MERN stack auth logic here
+            alert('Login triggered!');
+        });
+    </script>
+</body>
+
+</html>
