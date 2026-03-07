@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restaurant Dashboard | FoodLink</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/dashboard.css">
 </head>
@@ -40,17 +40,17 @@
                 </div>
                 <div class="panel-body">
                     <form id="add-food-form">
-                        <div class="form-group">
-                            <label class="form-label" for="foodType">Food Description</label>
-                            <input type="text" id="foodType" class="form-control" placeholder="e.g. 5 boxes of pasta, fresh bread" required>
+                        <div class="form-group floating">
+                            <input type="text" id="foodType" class="form-control" placeholder=" " required>
+                            <label class="form-label" for="foodType">Food Description (e.g. 5 boxes pasta)</label>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group floating">
+                            <input type="text" id="quantity" class="form-control" placeholder=" " required>
                             <label class="form-label" for="quantity">Quantity (Servings/Weight)</label>
-                            <input type="text" id="quantity" class="form-control" placeholder="e.g. 20 servings, 5 kg" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group floating">
+                            <input type="datetime-local" id="pickupTime" class="form-control" placeholder=" " required>
                             <label class="form-label" for="pickupTime">Latest Pickup Time</label>
-                            <input type="datetime-local" id="pickupTime" class="form-control" required>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">List Food for Donation</button>
                     </form>

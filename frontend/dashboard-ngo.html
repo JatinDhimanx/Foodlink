@@ -1,54 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NGO Dashboard | FoodLink</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        /* Specific styles to make cards look like food menu items */
+        .food-card {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--white);
+        }
+
+        .food-card:last-child {
+            border-bottom: none;
+        }
+
+        .food-details h3 {
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .food-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+    </style>
 </head>
+
 <body>
     <div id="navbar-container"></div>
-    
+
     <div class="container dashboard-container">
         <div class="dashboard-header">
             <div>
                 <h1 style="color: var(--primary-dark)">Welcome, <span id="user-name">Organization</span></h1>
                 <p class="text-muted">Claim available food for your communities</p>
             </div>
-            <a href="/map-view.html" class="btn btn-outline">Find on Map</a>
+            <a href="/map-view.html" class="btn btn-outline" style="border-width: 2px;">📍 Live Impact Map</a>
         </div>
 
         <div class="dashboard-grid">
-            <!-- Left: Available Food -->
-            <div class="panel">
-                <div class="panel-header" style="background-color: rgba(46, 204, 113, 0.05);">
-                    <h2 class="panel-title" style="color: var(--primary-dark)">Available Donations Nearby</h2>
+            <div class="panel" style="border-radius: var(--radius-lg); overflow: hidden;">
+                <div class="panel-header" style="background: var(--white);">
+                    <h2 class="panel-title" style="font-size: 1.2rem;">Available Nearby</h2>
                 </div>
-                <div class="panel-body">
-                    <div class="item-list" id="available-food">
-                        <p class="text-muted">Searching for available food...</p>
+                <div class="panel-body" style="padding: 0;" id="available-food">
+                    <div class="food-card">
+                        <div class="food-details">
+                            <span class="status-badge status-available mb-1" style="display:inline-block">🥦 Surplus
+                                Food</span>
+                            <h3 style="margin-top: 8px;">Fresh Pasta & Bread Boxes</h3>
+                            <p style="color: var(--text-main); font-weight: 600;">20 Servings</p>
+                            <div class="food-meta">
+                                📍 The Grand Hotel • 2.5 km away<br>
+                                ⏱️ Pickup by 10:30 PM
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; justify-content: flex-end;">
+                            <button class="btn btn-secondary">Claim Food</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right: Claimed Food -->
-            <div class="panel h-fit">
-                <div class="panel-header">
-                    <h2 class="panel-title">Your Active Claims</h2>
+            <div class="panel h-fit" style="background: #FAFAFA;">
+                <div class="panel-header" style="background: transparent; border: none;">
+                    <h2 class="panel-title" style="font-size: 1.1rem;">Active Claims</h2>
                 </div>
-                <div class="panel-body">
-                    <div class="item-list" id="my-pickups">
-                        <p class="text-muted">Loading claims...</p>
-                    </div>
+                <div class="panel-body" id="my-pickups" style="padding-top: 0;">
+                    <p class="text-muted" style="font-size: 0.9rem; text-align: center; padding: 2rem 0;">No active
+                        claims right now.</p>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <script type="module" src="js/main.js"></script>
-    <script type="module" src="js/dashboard.js"></script>
 </body>
+
 </html>

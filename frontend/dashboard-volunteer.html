@@ -1,35 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volunteer Dashboard | FoodLink</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Delivery Partner | FoodLink</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .task-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .route-line {
+            border-left: 2px dashed #ccc;
+            margin-left: 7px;
+            padding-left: 20px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+    </style>
 </head>
+
 <body>
     <div id="navbar-container"></div>
-    
-    <div class="container dashboard-container">
-        <div class="dashboard-header">
+
+    <div class="container dashboard-container" style="max-width: 800px;">
+        <div class="dashboard-header"
+            style="background: white; padding: 2rem; border-radius: var(--radius-lg); margin-bottom: 2rem; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.03);">
             <div>
+                <span class="status-badge status-available mb-1" style="display:inline-block">🟢 ONLINE</span>
                 <h1 style="color: var(--primary-dark)">Welcome, <span id="user-name">Hero</span></h1>
                 <p class="text-muted">Help deliver food and fight hunger</p>
             </div>
-            <a href="/map-view.html" class="btn btn-outline">Check Map</a>
+            <div style="text-align: right;">
+                <h2 style="font-size: 2rem; font-weight: 800; color: var(--primary);">0</h2>
+                <span style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500;">Deliveries</span>
+            </div>
         </div>
 
         <div class="dashboard-grid">
             <!-- Left: Pending Transport Requests -->
             <div class="panel">
                 <div class="panel-header" style="background-color: rgba(243, 156, 18, 0.05);">
-                    <h2 class="panel-title" style="color: var(--secondary-dark)">Available Delivery Tasks</h2>
+                    <h2 class="panel-title" style="color: var(--primary-dark)">Available Delivery Tasks</h2>
                 </div>
-                <div class="panel-body">
-                    <div class="item-list" id="pending-deliveries">
-                        <p class="text-muted">Looking for delivery tasks...</p>
-                    </div>
+                <div class="panel-body" id="pending-deliveries">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span style="font-weight: 600;">📦 20 Servings Pasta</span>
+                    <span style="color: var(--primary); font-weight: 700;">3.2 km</span>
+                </div>
+
+                <div class="route-line">
+                    <span
+                        style="position: absolute; left: -8px; top: 0; background: var(--text-main); border-radius: 50%; width: 14px; height: 14px;"></span>
+                    <p style="font-size: 0.95rem; margin: 0; color: var(--text-main);"><strong>Pickup:</strong> The Grand Hotel</p>
+                </div>
+                <div style="position: relative; padding-left: 20px;">
+                    <span
+                        style="position: absolute; left: -1px; top: 2px; background: var(--primary); border-radius: 50%; width: 14px; height: 14px;"></span>
+                    <p style="font-size: 0.95rem; margin: 0; color: var(--text-main);"><strong>Drop:</strong> Hope Foundation NGO</p>
+                </div>
+
+                <button class="btn btn-primary btn-block" style="margin-top: 1.5rem;">Accept Delivery</button>
                 </div>
             </div>
 
@@ -46,9 +83,7 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <script type="module" src="js/main.js"></script>
-    <script type="module" src="js/dashboard.js"></script>
 </body>
+
 </html>
