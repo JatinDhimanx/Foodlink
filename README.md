@@ -5,8 +5,8 @@ Smart Food Waste Redistribution Platform connecting Restaurants, NGOs, and Volun
 ## Project Structure
 
 This is a full-stack platform consisting of:
-- **Backend:** Node.js, Express, MongoDB Atlas, Socket.io
-- **Frontend:** HTML, Vanilla JS, CSS, Leaflet Maps
+- **Backend:** Node.js, Express, MongoDB Atlas
+- **Frontend:** HTML, JS, CSS, Leaflet Maps
 
 ## Getting Started
 
