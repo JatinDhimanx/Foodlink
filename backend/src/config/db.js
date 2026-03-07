@@ -7,10 +7,8 @@ const connectDB = async () => {
     
     // Check if the URI is the default template and use mongodb-memory-server
     if (uri.includes('<username>')) {
-      console.log('No realistic MONGO_URI provided. Starting in-memory MongoDB...');
-      const { MongoMemoryServer } = require('mongodb-memory-server');
-      const mongoServer = await MongoMemoryServer.create();
-      uri = mongoServer.getUri();
+      console.log('Using local persistent MongoDB connection on port 27017...');
+      uri = 'mongodb://127.0.0.1:27017/foodlink';
     }
 
     const conn = await mongoose.connect(uri);

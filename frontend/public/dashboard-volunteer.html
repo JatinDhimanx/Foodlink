@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Dashboard | FoodLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Socket.IO library to enable real-time features -->
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <style>
+        /* Modern App Style Theme */
+        :root { --bg-blue: #EAF3FA; --brand-green: #6CBE58; --brand-dark: #1A1A1A; --white: #FFFFFF; --text-grey: #7A8B99;}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-blue); color: var(--brand-dark); padding: 2rem; padding-bottom: 5rem;}
+        
+        .dash-nav { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 1rem 2rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 2rem; }
+        .logo { font-size: 1.2rem; font-weight: 800; text-decoration: none; color: var(--brand-dark); }
+        .logo span { color: var(--brand-green); }
+        .user-info { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+        .logout-btn { background: #ff4d4d; color: white; padding: 0.5rem 1rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        
+        .panel { background: var(--white); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); overflow: hidden; height: fit-content; border: 1px solid transparent; }
+        .panel-header { padding: 1.5rem 2rem; border-bottom: 1px solid #eee; background: #fff; display: flex; justify-content: space-between; align-items: center;}
+        .panel-header h2 { font-size: 1.2rem; font-weight: 700; color: var(--brand-dark); }
+        .panel-body { padding: 2rem; }
+
+        .list-container { display: flex; flex-direction: column; gap: 1rem; max-height: 600px; overflow-y: auto;}
+        .list-item { padding: 1.2rem; border: 1px solid #eee; border-radius: 12px; display: flex; flex-direction: column; gap: 0.8rem; transition: background 0.3s;}
+        .list-item:hover { background: #fcfcfc; border-color: #ddd; }
+        .list-header { display: flex; justify-content: space-between; align-items: flex-start;}
+        .list-header h4 { font-size: 1.1rem; margin-bottom: 4px; color: var(--brand-dark); }
+        .list-header p { font-size: 0.85rem; color: var(--text-grey); }
+        .badge { background: rgba(108, 190, 88, 0.1); color: var(--brand-green); padding: 5px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .btn-claim { background: #ff9800; color: var(--white); padding: 0.6rem 1.2rem; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.3s; align-self: flex-end; }
+        .btn-claim:hover { background: #e68a00; }
+        
+        /* Actions container for delivery */
+        .actions-row { display: flex; gap: 10px; align-self: flex-end;}
+        .btn-update { background: #007bff; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;}
+        .btn-complete { background: var(--brand-green); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;}
+
+        /* Notification styling */
+        .notification-area { padding: 1rem; background: #cce5ff; color: #004085; border-radius: 12px; margin-bottom: 1rem; display: none; text-align: center; font-weight: 600; }
+
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            body { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    
+    <nav class="dash-nav container">
+        <a href="/" class="logo">🍽️ FOOD<span>LINK</span></a>
+        <div class="user-info">
+            <span>👋 Delivery Volunteer</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container container">
+        <div id="notification" class="notification-area">New pickup request available! Refreshing...</div>
+
+        <div class="dashboard-grid">
+            
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Pending Pickups Needs Delivery</h2>
+                    <button class="btn-claim" style="background:#007bff; padding: 0.4rem 0.8rem;" onclick="fetchPendingPickups()">Refresh</button>
+                </div>
+                <div class="panel-body">
+                    <div class="list-container" id="pending-container">
+                        <p style="text-align: center; color: var(--text-grey); padding: 2rem;">Loading pending deliveries...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header"><h2>Your Deliveries</h2></div>
+                <div class="panel-body">
+                    <div class="list-container" id="mydeliveries-container">
+                        <p style="text-align: center; color: var(--text-grey); padding: 2rem;">Loading your deliveries...</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if(!token) window.location.href = '/login.html';
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        }
+
+        // ======================== SOCKET.IO REAL-TIME ========================
+        const socket = io('http://localhost:5000');
+        socket.on('connect', () => {
+             console.log('Connected to real-time server');
+             socket.emit('join_room', 'volunteer'); // Join Volunteer room
+        });
+        
+        socket.on('new_pickup_request', (data) => {
+            const notif = document.getElementById('notification');
+            notif.innerHTML = `New pickup route available from ${data.listing.restaurantId.name}!`;
+            notif.style.display = 'block';
+            fetchPendingPickups(); // Refresh the list
+            setTimeout(() => notif.style.display = 'none', 5000);
+        });
+
+
+        // ======================== API INTEGRATION ========================
+
+        async function fetchPendingPickups() {
+            const container = document.getElementById('pending-container');
+            try {
+                const res = await fetch('/api/pickups/pending', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await res.json();
+                container.innerHTML = ''; 
+
+                if(!result.data || result.data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-grey); padding: 2rem;">No pending pickups needed right now.</p>';
+                    return;
+                }
+
+                result.data.forEach(item => {
+                    const foodInfo = item.foodListingId ? `${item.foodListingId.quantity} ${item.foodListingId.foodType}` : 'Unknown Food';
+                    const restInfo = item.foodListingId && item.foodListingId.restaurantId ? item.foodListingId.restaurantId.name : 'Unknown location';
+                    const ngoInfo = item.ngoId ? item.ngoId.name : 'Unknown NGO';
+
+                    container.innerHTML += `
+                        <div class="list-item">
+                            <div class="list-header">
+                                <div>
+                                    <h4>${foodInfo}</h4>
+                                    <p>🛒 From: <strong>${restInfo}</strong></p>
+                                    <p>🎯 To: <strong>${ngoInfo}</strong></p>
+                                </div>
+                                <span class="badge" style="background: rgba(255, 152, 0, 0.1); color: #ff9800;">Needs Delivery</span>
+                            </div>
+                            <button class="btn-claim" onclick="acceptDelivery('${item._id}')">Accept Delivery route</button>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error("Error:", error);
+                container.innerHTML = '<p style="text-align: center; color: red;">Failed to load.</p>';
+            }
+        }
+
+        async function fetchMyDeliveries() {
+            const container = document.getElementById('mydeliveries-container');
+            try {
+                const res = await fetch('/api/deliveries/my-deliveries', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await res.json();
+                
+                container.innerHTML = ''; 
+
+                if(!result.data || result.data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-grey); padding: 2rem;">No active deliveries.</p>';
+                    return;
+                }
+
+                result.data.forEach(item => {
+                    const pickup = item.pickupId;
+                    const foodInfo = pickup && pickup.foodListingId ? `${pickup.foodListingId.quantity} ${pickup.foodListingId.foodType}` : 'Unknown Food';
+                    const restInfo = pickup && pickup.foodListingId && pickup.foodListingId.restaurantId ? pickup.foodListingId.restaurantId.name : 'Unknown location';
+                    const ngoInfo = pickup && pickup.ngoId ? pickup.ngoId.name : 'Unknown NGO';
+                    
+                    let actionsHtml = '';
+                    if(item.status === 'pending') {
+                        actionsHtml = `
+                        <div class="actions-row">
+                            <button class="btn-update" onclick="updateDeliveryStatus('${item._id}', 'in_transit')">Mark In Transit</button>
+                        </div>`;
+                    } else if(item.status === 'in_transit') {
+                        actionsHtml = `
+                        <div class="actions-row">
+                            <button class="btn-complete" onclick="updateDeliveryStatus('${item._id}', 'delivered')">Mark Delivered</button>
+                        </div>`;
+                    }
+
+                    container.innerHTML += `
+                        <div class="list-item">
+                            <div class="list-header">
+                                <div>
+                                    <h4>${foodInfo}</h4>
+                                    <p>🛒 Pickup: ${restInfo}</p>
+                                    <p>🎯 Dropoff: ${ngoInfo}</p>
+                                </div>
+                                <span class="badge" style="background:#eaf3fa; color:var(--brand-dark);">${item.status}</span>
+                            </div>
+                            ${actionsHtml}
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error("Error:", error);
+                container.innerHTML = '<p style="text-align: center; color: red;">Failed to load your deliveries.</p>';
+            }
+        }
+
+        async function acceptDelivery(pickupId) {
+            try {
+                const res = await fetch('/api/deliveries/accept', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ pickupId })
+                });
+
+                if(res.ok) {
+                    alert('Delivery accepted!');
+                    fetchPendingPickups();
+                    fetchMyDeliveries();
+                } else {
+                    const errorData = await res.json();
+                    alert('Failed: ' + (errorData.message || 'Server error'));
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert('Connection error.');
+            }
+        }
+
+        async function updateDeliveryStatus(deliveryId, status) {
+            try {
+                const res = await fetch(`/api/deliveries/${deliveryId}/status`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                if(res.ok) {
+                    fetchMyDeliveries();
+                } else {
+                    const errorData = await res.json();
+                    alert('Failed: ' + (errorData.message || 'Server error'));
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert('Connection error.');
+            }
+        }
+
+        // Init
+        fetchPendingPickups();
+        fetchMyDeliveries();
+    </script>
+</body>
+</html>

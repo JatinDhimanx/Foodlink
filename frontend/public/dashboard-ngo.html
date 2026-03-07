@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Dashboard | FoodLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Socket.IO library to enable real-time features -->
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <style>
+        /* Modern App Style Theme */
+        :root { --bg-blue: #EAF3FA; --brand-green: #6CBE58; --brand-dark: #1A1A1A; --white: #FFFFFF; --text-grey: #7A8B99;}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-blue); color: var(--brand-dark); padding: 2rem; padding-bottom: 5rem;}
+        
+        .dash-nav { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 1rem 2rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 2rem; }
+        .logo { font-size: 1.2rem; font-weight: 800; text-decoration: none; color: var(--brand-dark); }
+        .logo span { color: var(--brand-green); }
+        .user-info { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+        .logout-btn { background: #ff4d4d; color: white; padding: 0.5rem 1rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        
+        .panel { background: var(--white); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); overflow: hidden; height: fit-content; border: 1px solid transparent; }
+        .panel-header { padding: 1.5rem 2rem; border-bottom: 1px solid #eee; background: #fff; display: flex; justify-content: space-between; align-items: center; }
+        .panel-header h2 { font-size: 1.2rem; font-weight: 700; color: var(--brand-dark); }
+        .panel-body { padding: 2rem; }
+
+        .list-container { display: flex; flex-direction: column; gap: 1rem; max-height: 600px; overflow-y: auto;}
+        .list-item { padding: 1.2rem; border: 1px solid #eee; border-radius: 12px; display: flex; flex-direction: column; gap: 0.8rem; transition: background 0.3s;}
+        .list-item:hover { background: #fcfcfc; border-color: #ddd; }
+        .list-header { display: flex; justify-content: space-between; align-items: flex-start;}
+        .list-header h4 { font-size: 1.1rem; margin-bottom: 4px; color: var(--brand-dark); }
+        .list-header p { font-size: 0.85rem; color: var(--text-grey); }
+        .badge { background: rgba(108, 190, 88, 0.1); color: var(--brand-green); padding: 5px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .btn-claim { background: var(--brand-green); color: var(--white); padding: 0.6rem 1.2rem; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.3s; align-self: flex-end; }
+        .btn-claim:hover { background: #5aa647; }
+        
+        /* Notification styling */
+        .notification-area { padding: 1rem; background: #fff3cd; color: #856404; border-radius: 12px; margin-bottom: 1rem; display: none; text-align: center; font-weight: 600; }
+
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            body { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    
+    <nav class="dash-nav container">
+        <a href="/" class="logo">🍽️ FOOD<span>LINK</span></a>
+        <div class="user-info">
+            <span>👋 NGO Partner</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container container">
+        <div id="notification" class="notification-area">New food available! Refreshing...</div>
+        
+        <div class="dashboard-grid">
+            
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Available Food</h2>
+                    <button class="btn-claim" style="background:#007bff; padding: 0.4rem 0.8rem;" onclick="fetchAvailableFood()">Refresh</button>
+                </div>
+                <div class="panel-body">
+                    <div class="list-container" id="available-container">
+                        <p style="text-align: center; color: var(--text-grey); padding: 2rem;">Loading available food...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header"><h2>Your Approved Pickups</h2></div>
+                <div class="panel-body">
+                    <div class="list-container" id="mypickups-container">
+                        <p style="text-align: center; color: var(--text-grey); padding: 2rem;">Loading your pickups...</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if(!token) window.location.href = '/login.html';
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        }
+
+        // ======================== SOCKET.IO REAL-TIME ========================
+        const socket = io('http://localhost:5000');
+        socket.on('connect', () => {
+             console.log('Connected to real-time server');
+             socket.emit('join_room', 'ngo'); // Join NGO room
+        });
+        
+        socket.on('new_food_listing', (listing) => {
+            const notif = document.getElementById('notification');
+            notif.innerHTML = `New food available! ${listing.quantity} ${listing.foodType}`;
+            notif.style.display = 'block';
+            fetchAvailableFood(); // Refresh the list
+            setTimeout(() => notif.style.display = 'none', 5000);
+        });
+
+
+        // ======================== API INTEGRATION ========================
+
+        // 1. Fetch available food listings
+        async function fetchAvailableFood() {
+            const container = document.getElementById('available-container');
+            try {
+                const res = await fetch('/api/food/available');
+                const result = await res.json();
+                
+                container.innerHTML = ''; 
+
+                if(!result.data || result.data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-grey); padding: 2rem;">No food currently available.</p>';
+                    return;
+                }
+
+                result.data.forEach(item => {
+                    // Make sure restaurantId is populated
+                    const restaurantName = item.restaurantId ? item.restaurantId.name : 'Unknown Restaurant';
+                    container.innerHTML += `
+                        <div class="list-item">
+                            <div class="list-header">
+                                <div>
+                                    <h4>${item.quantity} ${item.foodType}</h4>
+                                    <p>From: <strong>${restaurantName}</strong></p>
+                                    <p>Latest Pickup: ${new Date(item.pickupTime).toLocaleString()}</p>
+                                </div>
+                                <span class="badge">Available</span>
+                            </div>
+                            <button class="btn-claim" onclick="claimFood('${item._id}')">Request Pickup</button>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error("Error:", error);
+                container.innerHTML = '<p style="text-align: center; color: red;">Failed to load available food.</p>';
+            }
+        }
+
+        // 2. Fetch NGO's own pickups
+        async function fetchMyPickups() {
+            const container = document.getElementById('mypickups-container');
+            try {
+                const res = await fetch('/api/pickups/my-pickups', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await res.json();
+                
+                container.innerHTML = ''; 
+
+                if(!result.data || result.data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-grey); padding: 2rem;">No active pickups.</p>';
+                    return;
+                }
+
+                result.data.forEach(item => {
+                    const foodInfo = item.foodListingId ? `${item.foodListingId.quantity} ${item.foodListingId.foodType}` : 'Unknown Food';
+                    const restInfo = item.foodListingId && item.foodListingId.restaurantId ? item.foodListingId.restaurantId.name : 'Unknown location';
+                    
+                    container.innerHTML += `
+                        <div class="list-item">
+                            <div class="list-header">
+                                <div>
+                                    <h4>${foodInfo}</h4>
+                                    <p>Pickup From: ${restInfo}</p>
+                                </div>
+                                <span class="badge" style="background:#eaf3fa; color:var(--brand-dark);">${item.status}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error("Error:", error);
+                container.innerHTML = '<p style="text-align: center; color: red;">Failed to load your pickups.</p>';
+            }
+        }
+
+        // 3. Claim food API
+        async function claimFood(foodListingId) {
+            try {
+                const res = await fetch('/api/pickups/request', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ foodListingId })
+                });
+
+                if(res.ok) {
+                    alert('Pickup requested! A volunteer will be assigned soon.');
+                    fetchAvailableFood();
+                    fetchMyPickups();
+                } else {
+                    const errorData = await res.json();
+                    alert('Failed: ' + (errorData.message || 'Server error'));
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert('Connection error.');
+            }
+        }
+
+        // Init
+        fetchAvailableFood();
+        fetchMyPickups();
+    </script>
+</body>
+</html>

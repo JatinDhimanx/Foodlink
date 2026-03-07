@@ -8,6 +8,7 @@ const handleSockets = require('./sockets/socketHandler');
 // Connect to database
 connectDB();
 
+
 const server = http.createServer(app);
 
 // Initialize Socket.io

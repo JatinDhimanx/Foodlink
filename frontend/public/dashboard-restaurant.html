@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Dashboard | FoodLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Modern App Style Theme */
+        :root { --bg-blue: #EAF3FA; --brand-green: #6CBE58; --brand-dark: #1A1A1A; --white: #FFFFFF; --text-grey: #7A8B99;}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-blue); color: var(--brand-dark); padding: 2rem; padding-bottom: 5rem;}
+        
+        /* Navbar specific to dashboard */
+        .dash-nav { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 1rem 2rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 2rem; }
+        .logo { font-size: 1.2rem; font-weight: 800; text-decoration: none; color: var(--brand-dark); }
+        .logo span { color: var(--brand-green); }
+        .user-info { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+        .logout-btn { background: #ff4d4d; color: white; padding: 0.5rem 1rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+
+        /* Grid Layout */
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        
+        /* Modern Panels */
+        .panel { background: var(--white); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); overflow: hidden; height: fit-content; border: 1px solid transparent; }
+        .panel:hover { border-color: #eee; }
+        .panel-header { padding: 1.5rem 2rem; border-bottom: 1px solid #eee; background: #fff; }
+        .panel-header h2 { font-size: 1.2rem; font-weight: 700; color: var(--brand-dark); }
+        .panel-body { padding: 2rem; }
+
+        /* Form styling same as register */
+        .form-group { margin-bottom: 1.2rem; text-align: left; }
+        .form-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #555; text-transform: uppercase; letter-spacing: 0.5px;}
+        .form-control { width: 100%; padding: 1rem; border: 1px solid #ddd; border-radius: 12px; font-size: 1rem; outline: none; transition: 0.3s; background: #fff; }
+        .form-control:focus { border-color: var(--brand-green); box-shadow: 0 0 0 3px rgba(108, 190, 88, 0.1); }
+        .btn-solid-green { width: 100%; background: var(--brand-green); color: var(--white); padding: 1rem; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-solid-green:hover { background: #5aa647; }
+
+        /* List Items (Swiggy menu style) */
+        .list-container { display: flex; flex-direction: column; gap: 1rem; }
+        .list-item { padding: 1rem; border: 1px solid #eee; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: background 0.3s;}
+        .list-item:hover { background: #fcfcfc; }
+        .list-item h4 { font-size: 1.1rem; margin-bottom: 4px; color: var(--brand-dark); }
+        .list-item p { font-size: 0.85rem; color: var(--text-grey); }
+        .badge { background: rgba(108, 190, 88, 0.1); color: var(--brand-green); padding: 5px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-claimed { background: #fff3cd; color: #856404; }
+
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            body { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    
+    <nav class="dash-nav container">
+        <a href="/" class="logo">🍽️ FOOD<span>LINK</span></a>
+        <div class="user-info">
+            <span>👋 Restaurant Partner</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container container">
+        <div class="dashboard-grid">
+            
+            <div class="panel">
+                <div class="panel-header"><h2>Your Food Listings</h2></div>
+                <div class="panel-body">
+                    <div class="list-container" id="listings-container">
+                        <p style="text-align: center; color: var(--text-grey); padding: 2rem;">Loading your active listings...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header"><h2>Donate Surplus Food</h2></div>
+                <div class="panel-body">
+                    <form id="add-food-form">
+                        <div class="form-group">
+                            <label class="form-label">Food Description</label>
+                            <input type="text" id="foodType" class="form-control" placeholder="e.g. 20 plates Veg Biryani" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Quantity</label>
+                            <input type="text" id="quantity" class="form-control" placeholder="e.g. 20 servings, 5 kg" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Latest Pickup Time</label>
+                            <input type="datetime-local" id="pickupTime" class="form-control" required>
+                        </div>
+                        
+                        <input type="hidden" id="lat" value="28.6139">
+                        <input type="hidden" id="lng" value="77.2090">
+                        <input type="hidden" id="address" value="Restaurant Static Address">
+
+                        <button type="submit" class="btn-solid-green">List for Donation</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication on load
+        const token = localStorage.getItem('token');
+        if(!token) window.location.href = '/login.html';
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        }
+
+        // ======================== API INTEGRATION ========================
+
+        // 1. Fetch existing listings (GET /api/food/my-listings)
+        async function fetchMyListings() {
+            const container = document.getElementById('listings-container');
+            
+            try {
+                // Hitting endpoint from api-spec.md
+                const res = await fetch('/api/food/my-listings', {
+                    headers: { 
+                        'Authorization': `Bearer ${token}` // Authorized Bearer token
+                    }
+                });
+                const data = await res.json();
+                
+                container.innerHTML = ''; // clear loading state
+
+                if(!data.data || data.data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-grey); padding: 2rem;">No active listings. Add surplus food on the right!</p>';
+                    return;
+                }
+
+                // Modern List rendering (Swiggy menu style)
+                data.data.forEach(item => {
+                    const statusClass = item.status === 'claimed' ? 'badge-claimed' : '';
+                    container.innerHTML += `
+                        <div class="list-item">
+                            <div>
+                                <h4>${item.quantity} ${item.foodType}</h4>
+                                <p>Latest Pickup: ${new Date(item.pickupTime).toLocaleString()}</p>
+                            </div>
+                            <span class="badge ${statusClass}">${item.status}</span>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error("Error fetching listings:", error);
+                container.innerHTML = '<p style="text-align: center; color: red;">Failed to load listings. Connection error.</p>';
+            }
+        }
+
+        // 2. Add new food submission (POST /api/food/)
+        document.getElementById('add-food-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Gather data as per database-schema.md
+            const payload = {
+                foodType: document.getElementById('foodType').value,
+                quantity: document.getElementById('quantity').value,
+                pickupTime: document.getElementById('pickupTime').value,
+                location: {
+                    lat: parseFloat(document.getElementById('lat').value),
+                    lng: parseFloat(document.getElementById('lng').value),
+                    address: document.getElementById('address').value
+                }
+            };
+
+            try {
+                // Hitting endpoint from api-spec.md
+                const res = await fetch('/api/food/', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // Authorized
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if(res.ok) {
+                    alert('Surplus Food Listed Successfully!');
+                    document.getElementById('add-food-form').reset();
+                    fetchMyListings(); // Refresh the list
+                } else {
+                    const errorData = await res.json();
+                    alert('Failed: ' + (errorData.message || 'Server error'));
+                }
+            } catch (error) {
+                console.error("API Error:", error);
+                alert('Connection error.');
+            }
+        });
+
+        // Initialize dashboard on load
+        fetchMyListings();
+    </script>
+</body>
+</html>

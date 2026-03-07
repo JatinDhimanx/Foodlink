@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Food Map | FoodLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        /* Exact same styling theme */
+        :root { --bg-blue: #EAF3FA; --brand-green: #6CBE58; --brand-dark: #1A1A1A; --white: #FFFFFF; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-blue); color: var(--brand-dark); min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 4%; position: relative; z-index: 1000; background: var(--white); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--brand-dark); }
+        .logo span { color: var(--brand-green); }
+        
+        .map-container { flex: 1; position: relative; display: flex; flex-direction: column; padding: 2rem;}
+        #map { flex: 1; width: 100%; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 2px solid white; min-height: 500px; z-index: 10;}
+
+        .header-content { margin-bottom: 1.5rem; text-align: center;}
+        .header-content h1 { font-size: 2rem;}
+        .header-content p { color: #555;}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">🍽️ FOOD<span>LINK</span></a>
+        <div><a href="/login.html" style="font-weight: 600; color: var(--brand-dark); text-decoration: none;">Login / Dashboard &rarr;</a></div>
+    </nav>
+    
+    <div class="map-container">
+        <div class="header-content">
+            <h1>Surplus Food Near You</h1>
+            <p>Interactive map showing real-time available food donations from our restaurant partners.</p>
+        </div>
+        <div id="map"></div>
+    </div>
+
+    <script>
+        // Init map (default to center of Delh/India roughly)
+        const map = L.map('map').setView([28.6139, 77.2090], 11);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Custom green icon
+        const foodIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        async function loadFoodToMap() {
+            try {
+                // Hitting backend endpoint for available food
+                const res = await fetch('/api/food/available');
+                const result = await res.json();
+
+                if(!result.data) return;
+
+                const bounds = [];
+
+                result.data.forEach(item => {
+                    const loc = item.location || (item.restaurantId && item.restaurantId.location);
+                    
+                    if(loc && loc.lat && loc.lng) {
+                        const restName = item.restaurantId ? item.restaurantId.name : 'Unknown';
+                        const marker = L.marker([loc.lat, loc.lng], {icon: foodIcon}).addTo(map);
+                        
+                        marker.bindPopup(`
+                            <div style="text-align:center;">
+                                <h3 style="margin:0; color:#6CBE58;">${item.quantity} ${item.foodType}</h3>
+                                <p style="margin:5px 0 10px;">By: <strong>${restName}</strong></p>
+                                <a href="/login.html" style="background:#1A1A1A; color:white; padding:5px 15px; border-radius:15px; text-decoration:none; font-size:12px;">Login to Claim</a>
+                            </div>
+                        `);
+
+                        bounds.push([loc.lat, loc.lng]);
+                    }
+                });
+
+                // Auto zoom to fit all markers if any exist
+                if(bounds.length > 0) {
+                    map.fitBounds(bounds, {padding: [50, 50]});
+                }
+            } catch (error) {
+                console.error("Error fetching map data:", error);
+            }
+        }
+
+        loadFoodToMap();
+    </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | FoodLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* FoodLink Theme */
+        :root { --bg-blue: #EAF3FA; --brand-green: #6CBE58; --brand-dark: #1A1A1A; --white: #FFFFFF; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-blue); color: var(--brand-dark); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 1rem; }
+        
+        /* Modern Card */
+        .auth-card { background: var(--white); padding: 3rem; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); width: 100%; max-width: 450px; text-align: center; }
+        .auth-card h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+        .auth-card p { color: #7A8B99; margin-bottom: 2.5rem; font-size: 0.95rem; }
+        
+        /* Form Styling */
+        .form-group { margin-bottom: 1.5rem; text-align: left; }
+        .form-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-control { width: 100%; padding: 1rem; border: 1px solid #ddd; border-radius: 12px; font-size: 1rem; outline: none; transition: 0.3s; background: #fff; }
+        .form-control:focus { border-color: var(--brand-green); box-shadow: 0 0 0 3px rgba(108, 190, 88, 0.1); }
+        
+        /* Modern Button */
+        .btn-solid-green { width: 100%; background: var(--brand-green); color: var(--white); padding: 1rem; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-top: 1rem; text-transform: uppercase; letter-spacing: 1px;}
+        .btn-solid-green:hover { background: #5aa647; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(108, 190, 88, 0.2); }
+        .btn-solid-green:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .auth-footer { margin-top: 2.5rem; font-size: 0.9rem; color: #7A8B99; border-top: 1px solid #eee; padding-top: 1.5rem; }
+        .auth-footer a { color: var(--brand-green); font-weight: 600; text-decoration: none; }
+        .logo-back { font-size: 1.2rem; font-weight: 800; text-decoration: none; color: var(--brand-dark); position: absolute; top: 20px; left: 20px; }
+        .logo-back span { color: var(--brand-green); }
+
+        @media (max-width: 480px) {
+            .auth-card { padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="logo-back">🍽️ FOOD<span>LINK</span></a>
+    
+    <div class="auth-card">
+        <h1>Welcome Back</h1>
+        <p>Sign in to continue your impact.</p>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input type="email" id="email" class="form-control" placeholder="name@example.com" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-solid-green" id="submit-btn">Sign In</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Don't have an account? <a href="/register.html">Sign Up as Partner</a></p>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Signing In...';
+
+            try {
+                // Calling backend API spec: POST /api/auth/login
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if(response.ok) {
+                    // Save JWT token in localStorage securely
+                    localStorage.setItem('token', data.data.token);
+                    
+                    // Route based on role returned from API (restaurant/ngo/volunteer)
+                    const role = data.data.role; 
+                    window.location.href = `/dashboard-${role}.html`;
+                } else {
+                    alert('Login failed: ' + (data.message || 'Invalid credentials'));
+                }
+            } catch (err) {
+                console.error("API Error:", err);
+                alert('Connection error. Is backend running?');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Sign In';
+            }
+        });
+    </script>
+</body>
+</html>
