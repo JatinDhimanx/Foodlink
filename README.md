@@ -124,7 +124,7 @@ The platform shows pickup locations on a map interface, helping volunteers find 
 
 🚀 Getting Started
 1️⃣ Clone the Repository
-git clone 
+git clone https://github.com/JatinDhimanx/Foodlink.git
 2️⃣ Setup Environment Variables
 
 Inside the backend folder:
